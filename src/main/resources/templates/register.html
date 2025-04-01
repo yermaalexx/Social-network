@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@400;500;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/styles2.css}" />
+    <title>Registration</title>
+  </head>
+  <body>
+    <header class="logo-container">
+      <img src="/images/Matchify-logo.png" class="logo" alt="Matchify logo"/>
+    </header>
+
+    <h2>User Registration</h2>
+    <form th:action="@{/register}" method="post" enctype="multipart/form-data">
+      <div th:if="${error}" style="color:red;">
+        <p th:text="${error}"></p>
+      </div>
+
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required><br>
+
+      <label for="birthYear">Birth year:</label>
+      <input type="number" id="birthYear" name="birthYear" required><br>
+
+      <label for="location">Location:</label>
+      <input type="text" id="location" name="location" required><br>
+
+      <label for="userPhoto">Profile Picture (max 1MB):</label>
+      <input type="file" id="userPhoto" name="userPhoto" accept="image/*" onchange="previewProfileImage(event)">
+      <br>
+      <img id="preview" src="#" height="50px" width="auto">
+
+      <div class="category-container">
+        <div class="category-group" th:each="category : ${categoryMap.keySet()}">
+          <h3 th:text="${category.description}"></h3>
+          <div th:each="interest : ${categoryMap.get(category)}">
+            <input type="checkbox" th:id="${interest.name()}"
+                   th:name="${interest.name()}" th:value="true">
+            <label th:for="${interest.name()}" th:text="${interest.description}"></label><br>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <button type="submit">Register</button>
+    </form>
+
+    <script>
+      function previewProfileImage(event) {
+        const preview = document.getElementById('preview');
+        const file = event.target.files[0];
+        if (file) {
+          preview.src = URL.createObjectURL(file);
+          preview.style.display = 'block';
+        } else {
+          preview.style.display = 'none';
+          preview.src = '#';
+        }
+      }
+    </script>
+  </body>
+</html>
