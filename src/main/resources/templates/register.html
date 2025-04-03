@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
   <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@400;500;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
@@ -12,22 +12,31 @@
     </header>
 
     <h2>User Registration</h2>
-    <form th:action="@{/register}" method="post" enctype="multipart/form-data">
+
+    <form th:action="@{/register}" method="post" th:object="${user}" enctype="multipart/form-data">
       <div th:if="${error}" style="color:red;">
         <p th:text="${error}"></p>
       </div>
 
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" required><br>
+      <h4>Name:</h4>
+      <label for="name">
+        <input type="text" id="name" th:field="*{name}" required>
+      </label>
 
-      <label for="birthYear">Birth year:</label>
-      <input type="number" id="birthYear" name="birthYear" required><br>
+      <h4>Birth year:</h4>
+      <label for="birthYear">
+        <input type="number" id="birthYear" th:field="*{birthYear}" required>
+      </label>
 
-      <label for="location">Location:</label>
-      <input type="text" id="location" name="location" required><br>
+      <h4>Location:</h4>
+      <label for="location">
+        <input type="text" id="location" th:field="*{location}" required>
+      </label>
 
-      <label for="userPhoto">Profile Picture (max 1MB):</label>
-      <input type="file" id="userPhoto" name="userPhoto" accept="image/*" onchange="previewProfileImage(event)">
+      <h4>Profile Picture (max 1MB):</h4>
+      <label for="userPhoto">
+        <input type="file" id="userPhoto" name="userPhoto" accept="image/*" onchange="previewProfileImage(event)" th:value="photo">
+      </label>
       <br>
       <img id="preview" src="#" height="50px" width="auto">
 
@@ -35,9 +44,11 @@
         <div class="category-group" th:each="category : ${categoryMap.keySet()}">
           <h3 th:text="${category.description}"></h3>
           <div th:each="interest : ${categoryMap.get(category)}">
-            <input type="checkbox" th:id="${interest.name()}"
-                   th:name="${interest.name()}" th:value="true">
-            <label th:for="${interest.name()}" th:text="${interest.description}"></label><br>
+            <label>
+              <input type="checkbox" th:id="${interest.name}"
+                       th:field="*{interests}" th:value="${interest.name}">
+              <span th:text="${interest.description}">Interest</span>
+            </label> <br>
           </div>
         </div>
       </div>
@@ -59,5 +70,6 @@
         }
       }
     </script>
+
   </body>
 </html>

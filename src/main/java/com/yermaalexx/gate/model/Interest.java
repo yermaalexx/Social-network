@@ -64,7 +64,7 @@ public enum Interest {
 
     public static List<Interest> getByCategory(InterestCategory category) {
         return Arrays.stream(values())
-                .filter(i -> i.getCategory() == category)
+                .filter(i -> i.getCategory().equals(category))
                 .toList();
     }
 }

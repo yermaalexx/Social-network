@@ -21,12 +21,16 @@ public class User {
     @GeneratedValue
     private UUID id;
 
+    @NotNull(message = "Enter your name")
+    @NotBlank(message = "Enter your name")
     private String name;
 
-    @Min(1900)
-    @Max(2020)
+    @Min(value = 1900, message = "Year of birth must be between 1900 and 2020")
+    @Max(value = 2020, message = "Year of birth must be between 1900 and 2020")
     private int birthYear;
 
+    @NotNull(message = "Enter your location")
+    @NotBlank(message = "Enter your location")
     private String location;
 
     private LocalDate registrationDate;
