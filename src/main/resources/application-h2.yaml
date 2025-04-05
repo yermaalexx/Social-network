@@ -9,3 +9,8 @@ spring:
   h2:
     console:
       enabled: true
+  web:
+    resources:
+      cache:
+        cachecontrol:
+          no-cache: true

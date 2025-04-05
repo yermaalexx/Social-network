@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -20,6 +20,7 @@ import java.util.List;
 public class RegistrationController {
 
     private final UserService userService;
+    private byte[] photoBytes;
 
     @ModelAttribute
     public void addInterestsToModel(Model model) {
@@ -40,24 +41,29 @@ public class RegistrationController {
     public String registerUser(User user,
                                @RequestParam("userPhoto") MultipartFile userPhoto,
                                Model model) {
-        if (user.getBirthYear() < 1900 || user.getBirthYear() > 2020) {
-            model.addAttribute("error", "Year of birth must be between 1900 and 2020");
-            return "register";
-        }
 
-        byte[] photoBytes = null;
         try {
-            if(!userPhoto.isEmpty()) {
+            if(userPhoto!=null && !userPhoto.isEmpty()) {
                 photoBytes = userPhoto.getBytes();
+                model.addAttribute("photoBase64", Base64.getEncoder().encodeToString(photoBytes));
             }
         } catch (IOException e) {
             model.addAttribute("error", "Error reading uploaded file.");
             return "register";
         }
 
+        if (user.getBirthYear() < 1900 || user.getBirthYear() > 2020) {
+            model.addAttribute("error", "Year of birth must be between 1900 and 2020");
+            if (photoBytes != null)
+                model.addAttribute("photoBase64", Base64.getEncoder().encodeToString(photoBytes));
+            return "register";
+        }
+
         List<String> selectedInterests = user.getInterests();
         if (selectedInterests.isEmpty()) {
             model.addAttribute("error", "You must choose at least one interest");
+            if (photoBytes != null)
+                model.addAttribute("photoBase64", Base64.getEncoder().encodeToString(photoBytes));
             return "register";
         }
         for(InterestCategory category : InterestCategory.values()) {
@@ -67,12 +73,12 @@ public class RegistrationController {
                     .count();
             if(count > 3) {
                 model.addAttribute("error", "Cannot select more than 3 interests from " + category.getDescription());
+                if (photoBytes != null)
+                    model.addAttribute("photoBase64", Base64.getEncoder().encodeToString(photoBytes));
                 return "register";
             }
 
         }
-
-        user.setRegistrationDate(LocalDate.now());
 
         User savedUser = userService.saveUser(user, photoBytes);
         userService.processUserMatches(savedUser.getId());
@@ -83,4 +89,6 @@ public class RegistrationController {
     public String registrationSuccess() {
         return "success";
     }
+
+
 }

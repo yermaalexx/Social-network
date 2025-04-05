@@ -34,6 +34,13 @@ div.category-group {
     margin-bottom: 20px;
 }
 
+.form-photo-container {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Montserrat', sans-serif;
     color: #2C3E50; /* Темно-синий для заголовков */

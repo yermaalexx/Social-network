@@ -11,38 +11,51 @@
       <img src="/images/Matchify-logo.png" class="logo" alt="Matchify logo"/>
     </header>
 
-    <h2>User Registration</h2>
+    <h3>User Registration</h3>
 
-    <form th:action="@{/register}" method="post" th:object="${user}" enctype="multipart/form-data">
-      <div th:if="${error}" style="color:red;">
+    <form id="registrationForm" th:action="@{/register}" method="post" th:object="${user}" enctype="multipart/form-data">
+      <div th:if="${error}" style="color:red; ">
         <p th:text="${error}"></p>
       </div>
+      <div id="errorInfo" style="color:red; ">
+        <p></p>
+      </div>
 
-      <h4>Name:</h4>
-      <label for="name">
-        <input type="text" id="name" th:field="*{name}" required>
-      </label>
+      <div class="form-photo-container">
 
-      <h4>Birth year:</h4>
-      <label for="birthYear">
-        <input type="number" id="birthYear" th:field="*{birthYear}" required>
-      </label>
+        <div>
+          <div>Profile Picture (max 1MB): </div>
+          <label for="userPhoto">
+            <input type="file" id="userPhoto" name="userPhoto" accept="image/*">
+          </label>
+          <br>
+          <img id="preview" th:src="'data:image/*;base64, ' + ${photoBase64}" height="50px" width="auto" alt=" No photo">
+        </div>
 
-      <h4>Location:</h4>
-      <label for="location">
-        <input type="text" id="location" th:field="*{location}" required>
-      </label>
+        <div>
+          <div>Name: </div>
+          <label for="name">
+            <input type="text" id="name" th:field="*{name}" required>
+          </label>
 
-      <h4>Profile Picture (max 1MB):</h4>
-      <label for="userPhoto">
-        <input type="file" id="userPhoto" name="userPhoto" accept="image/*" onchange="previewProfileImage(event)" th:value="photo">
-      </label>
-      <br>
-      <img id="preview" src="#" height="50px" width="auto">
+          <div>Birth year: </div>
+          <label for="birthYear">
+            <input type="number" id="birthYear" th:field="*{birthYear}" required>
+          </label>
+
+          <div>Location: </div>
+          <label for="location">
+            <input type="text" id="location" th:field="*{location}" required>
+          </label>
+        </div>
+
+      </div>
+
+      <h3>Choose the interests that are closest to you. No more than three in one category.</h3>
 
       <div class="category-container">
         <div class="category-group" th:each="category : ${categoryMap.keySet()}">
-          <h3 th:text="${category.description}"></h3>
+          <h4 th:text="${category.description}"></h4>
           <div th:each="interest : ${categoryMap.get(category)}">
             <label>
               <input type="checkbox" th:id="${interest.name}"
@@ -58,17 +71,46 @@
     </form>
 
     <script>
-      function previewProfileImage(event) {
-        const preview = document.getElementById('preview');
+      const MAX_FILE_SIZE = 1024*1024; // 1MB
+      const userPhotoInput = document.getElementById('userPhoto');
+      const preview = document.getElementById('preview');
+      const errorDiv = document.getElementById('errorInfo');
+      const errorParagraph = errorDiv.querySelector('p');
+
+      function showFileError(message) {
+        errorParagraph.textContent = message;
+        errorDiv.style.display = 'block';
+      }
+
+      userPhotoInput.addEventListener('change', function (event) {
         const file = event.target.files[0];
+
         if (file) {
+          if (!file.type.startsWith("image/")) {
+
+            showFileError("File must be an image!");
+            userPhotoInput.value = null;
+            preview.style.display = 'none';
+            return;
+          }
+
+          if (file.size > MAX_FILE_SIZE) {
+            showFileError("Photo must be smaller than 1MB!");
+            userPhotoInput.value = null;
+            preview.style.display = 'none';
+            return;
+          }
+
           preview.src = URL.createObjectURL(file);
           preview.style.display = 'block';
+
         } else {
           preview.style.display = 'none';
-          preview.src = '#';
         }
-      }
+
+        errorDiv.style.display = 'none';
+      });
+
     </script>
 
   </body>
