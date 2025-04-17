@@ -29,7 +29,11 @@
             <input type="file" id="userPhoto" name="userPhoto" accept="image/*">
           </label>
           <br>
-          <img id="preview" th:src="'data:image/*;base64, ' + ${photoBase64}" height="50px" width="auto" alt=" No photo">
+          <div>
+            <img id="preview"
+                 th:src="${photoBase64} != null ? 'data:image/*;base64, ' + ${photoBase64} : '/images/nophoto.png' "
+                 height="50px" width="auto" alt="User photo" />
+          </div>
         </div>
 
         <div>
@@ -76,6 +80,7 @@
       const preview = document.getElementById('preview');
       const errorDiv = document.getElementById('errorInfo');
       const errorParagraph = errorDiv.querySelector('p');
+      const DEFAULT_PHOTO_SRC = "/images/nophoto.png";
 
       function showFileError(message) {
         errorParagraph.textContent = message;
@@ -87,28 +92,27 @@
 
         if (file) {
           if (!file.type.startsWith("image/")) {
-
             showFileError("File must be an image!");
             userPhotoInput.value = null;
-            preview.style.display = 'none';
+            preview.src = DEFAULT_PHOTO_SRC;
             return;
           }
 
           if (file.size > MAX_FILE_SIZE) {
             showFileError("Photo must be smaller than 1MB!");
             userPhotoInput.value = null;
-            preview.style.display = 'none';
+            preview.src = DEFAULT_PHOTO_SRC;
             return;
           }
 
           preview.src = URL.createObjectURL(file);
           preview.style.display = 'block';
+          errorDiv.style.display = 'none';
 
         } else {
-          preview.style.display = 'none';
+          preview.src = DEFAULT_PHOTO_SRC;
+          preview.style.display = 'block';
         }
-
-        errorDiv.style.display = 'none';
       });
 
     </script>

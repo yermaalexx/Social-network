@@ -1,6 +1,5 @@
 package com.yermaalexx.gate.repository;
 
-import com.yermaalexx.gate.model.Interest;
 import com.yermaalexx.gate.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

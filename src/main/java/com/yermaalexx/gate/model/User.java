@@ -1,7 +1,6 @@
 package com.yermaalexx.gate.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,16 +20,10 @@ public class User {
     @GeneratedValue
     private UUID id;
 
-    @NotNull(message = "Enter your name")
-    @NotBlank(message = "Enter your name")
     private String name;
 
-    @Min(value = 1900, message = "Year of birth must be between 1900 and 2020")
-    @Max(value = 2020, message = "Year of birth must be between 1900 and 2020")
     private int birthYear;
 
-    @NotNull(message = "Enter your location")
-    @NotBlank(message = "Enter your location")
     private String location;
 
     private LocalDate registrationDate;
