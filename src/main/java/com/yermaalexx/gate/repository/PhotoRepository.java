@@ -8,6 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserPhotoRepository extends JpaRepository<UserPhoto, UUID> {
+public interface PhotoRepository extends JpaRepository<UserPhoto, UUID> {
     Optional<UserPhoto> findByUserId(UUID userId);
 }

@@ -18,9 +18,16 @@ import java.util.UUID;
 public class User {
     @Id
     @GeneratedValue
+    @Column(columnDefinition = "uuid")
     private UUID id;
 
     private String name;
+
+    @Transient
+    private String login;
+
+    @Transient
+    private String password;
 
     private int birthYear;
 
@@ -29,7 +36,8 @@ public class User {
     private LocalDate registrationDate;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "user_interests", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_interests", joinColumns = @JoinColumn(name = "user_id",
+    referencedColumnName = "id", columnDefinition = "uuid"))
     @Column(name = "interest")
     private List<String> interests = new ArrayList<>();
 }

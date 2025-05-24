@@ -28,15 +28,26 @@
           <label for="userPhoto">
             <input type="file" id="userPhoto" name="userPhoto" accept="image/*">
           </label>
-          <br>
-          <div>
+          <p>
+          <div class="photo">
             <img id="preview"
                  th:src="${photoBase64} != null ? 'data:image/*;base64, ' + ${photoBase64} : '/images/nophoto.png' "
-                 height="50px" width="auto" alt="User photo" />
+                 height="100px" width="auto" alt="User photo" />
           </div>
         </div>
 
         <div>
+          <div>Login: </div>
+          <input type="text" name="login"
+                 placeholder="Your login should be unique" th:field="*{login}"
+                 required pattern=".*\S.*" />
+
+          <div>Password: </div>
+          <input type="password" name="password" th:field="*{password}" required/>
+
+          <div>Confirm your password: </div>
+          <input type="password" name="confirm" />
+
           <div>Name: </div>
           <label for="name">
             <input type="text" id="name" th:field="*{name}" required>

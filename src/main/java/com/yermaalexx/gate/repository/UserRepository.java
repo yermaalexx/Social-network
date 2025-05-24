@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             @Param("interests") List<String> interests,
             @Param("excludeUserId") UUID excludeUserId
     );
-
+    /*
     @Query(value = """
         SELECT ui2.user_id
         FROM user_interests ui1
@@ -30,6 +30,15 @@ public interface UserRepository extends JpaRepository<User, UUID> {
         ORDER BY COUNT(*) DESC
     """, nativeQuery = true)
     List<UUID> findUsersSortedByInterestMatch(@Param("userId") UUID userId);
+*/
 
-
+    @Query(value = """
+        SELECT CAST(ui2.user_id AS VARCHAR) AS uid
+        FROM user_interests ui1
+        JOIN user_interests ui2 ON ui1.interest = ui2.interest
+        WHERE ui1.user_id = :userId AND ui2.user_id <> :userId
+        GROUP BY ui2.user_id
+        ORDER BY COUNT(*) DESC
+    """, nativeQuery = true)
+    List<String> findUsersSortedByInterestMatch(@Param("userId") UUID userId);
 }

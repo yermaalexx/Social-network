@@ -3,6 +3,7 @@ package com.yermaalexx.gate.controller;
 import com.yermaalexx.gate.model.Interest;
 import com.yermaalexx.gate.model.InterestCategory;
 import com.yermaalexx.gate.model.User;
+import com.yermaalexx.gate.service.UserLoginService;
 import com.yermaalexx.gate.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import java.util.List;
 public class RegistrationController {
 
     private final UserService userService;
+    private final UserLoginService userLoginService;
     private byte[] photoBytes;
 
     @ModelAttribute
@@ -27,19 +29,16 @@ public class RegistrationController {
         model.addAttribute("categoryMap", InterestCategory.getCategoryMap());
     }
 
-    @ModelAttribute(name = "user")
-    public User userReturn() {
-        return new User();
-    }
-
     @GetMapping
-    public String showRegistrationForm() {
+    public String showRegistrationForm(Model model) {
+        model.addAttribute("user", new User());
         return "register";
     }
 
     @PostMapping
     public String registerUser(User user,
                                @RequestParam("userPhoto") MultipartFile userPhoto,
+                               @RequestParam String confirm,
                                Model model) {
 
         try {
@@ -49,6 +48,15 @@ public class RegistrationController {
             }
         } catch (IOException e) {
             model.addAttribute("error", "Error reading uploaded file.");
+            if (photoBytes != null)
+                model.addAttribute("photoBase64", Base64.getEncoder().encodeToString(photoBytes));
+            return "register";
+        }
+
+        if (userLoginService.existsByLogin(user.getLogin())) {
+            model.addAttribute("error", "A user with this login already exists");
+            if (photoBytes != null)
+                model.addAttribute("photoBase64", Base64.getEncoder().encodeToString(photoBytes));
             return "register";
         }
 
@@ -77,18 +85,20 @@ public class RegistrationController {
                     model.addAttribute("photoBase64", Base64.getEncoder().encodeToString(photoBytes));
                 return "register";
             }
-
         }
 
-        User savedUser = userService.saveUser(user, photoBytes);
-        userService.processUserMatches(savedUser.getId());
-        return "redirect:/register/success";
-    }
+        if (!user.getPassword().equals(confirm)) {
+            model.addAttribute("error", "Fields 'Password' and 'Confirm password' are not the same");
+            if (photoBytes != null)
+                model.addAttribute("photoBase64", Base64.getEncoder().encodeToString(photoBytes));
+            return "register";
+        }
 
-    @GetMapping("/success")
-    public String registrationSuccess() {
-        return "success";
-    }
+        User savedUser = userService.saveNewUser(user, photoBytes);
 
+        userService.processUserMatches(savedUser);
+
+        return "redirect:/login";
+    }
 
 }

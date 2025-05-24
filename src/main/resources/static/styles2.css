@@ -1,8 +1,8 @@
-/* Основные настройки шрифтов */
+
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #F5F5F5; /* Светло-серый фон */
-    color: #2C3E50; /* Темно-синий цвет текста */
+    background-color: #F5F5F5;
+    color: #2C3E50;
     margin: 10px;
     padding: 20px;
 }
@@ -41,15 +41,52 @@ div.category-group {
     margin-bottom: 20px;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Montserrat', sans-serif;
-    color: #2C3E50; /* Темно-синий для заголовков */
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: .5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 2rem;
 }
 
-/* Кнопки и акценты */
+.match-card {
+    display:flex;
+    gap:1rem;
+    padding:.5rem;
+    border-bottom:1px solid #ddd;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.photo img {
+    border-radius: 50%;
+}
+
+.info p {
+    margin: 0;
+}
+
+.details form {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    color: #2C3E50;
+}
+
+
 button, .btn {
     font-family: 'Lato', sans-serif;
-    background-color: #FF6F00; /* Оранжевый для кнопок */
+    background-color: #FF6F00;
     color: #FFFFFF;
     border: none;
     padding: 10px 20px;
@@ -58,10 +95,10 @@ button, .btn {
 }
 
 button:hover, .btn:hover {
-    background-color: #F1C40F; /* Желтый при наведении */
+    background-color: #F1C40F;
 }
 
-/* Заголовки */
+
 h1 {
     font-size: 36px;
     margin-bottom: 20px;
@@ -77,25 +114,25 @@ h3 {
     margin-bottom: 10px;
 }
 
-/* Общие стили для текста */
+
 p, ul, ol {
     font-size: 16px;
     line-height: 1.6;
     margin-bottom: 10px;
 }
 
-/* Ссылки */
+
 a {
-    color: #4A90E2; /* Синий для ссылок */
+    color: #4A90E2;
     text-decoration: none;
     transition: color 0.3s;
 }
 
 a:hover {
-    color: #FF6F00; /* Оранжевый при наведении */
+    color: #FF6F00;
 }
 
-/* Основной стиль для карточек и блоков */
+
 .card {
     background-color: #FFFFFF;
     border: 1px solid #E0E0E0;
@@ -105,8 +142,8 @@ a:hover {
     margin-bottom: 20px;
 }
 
-/* Блоки с текстом и акцентами */
+
 .text-highlight {
-    color: #FF6F00; /* Оранжевый для акцентов в тексте */
+    color: #FF6F00;
     font-weight: bold;
 }

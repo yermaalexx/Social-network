@@ -1,3 +1,10 @@
+app:
+  cards-on-page: 2
+  max-messages-in-chat: 20
+
+server:
+  port: 8080
+
 spring:
   application:
     name: gate
@@ -9,5 +16,3 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 10MB
-server:
-  port: 8080

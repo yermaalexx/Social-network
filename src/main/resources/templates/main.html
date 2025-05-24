@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/styles2.css}" />
+    <title>Matchify — Your Matches</title>
+    <style>
+      #addBtn { margin:1rem 0; }
+      .actions {
+        margin-top:.5rem;
+        display:flex;
+        align-items:center;
+        gap:.5rem;
+      }
+      .chatBtn, .rejectBtn {
+        padding:.25rem .5rem;
+        border:none;
+        border-radius:4px;
+        cursor:pointer;
+        text-decoration:none;
+        color:#fff;
+      }
+      .chatBtn { background:#4CAF50; }
+      .rejectBtn { background:#f44336; }
+      .new-msg { color:#d00; font-weight:bold; margin-left:.25rem; }
+    </style>
+  </head>
+
+  <body>
+    <header class="logo-container">
+      <img src="/images/Matchify-logo.png" class="logo" alt="Matchify logo"/>
+    </header>
+
+    <section class="my-profile">
+      <h2>Your profile: </h2>
+      <div class="profile-card">
+        <div class="photo">
+          <img th:src="${user.getPhotoBase64} ? 'data:image/*;base64, ' + ${user.getPhotoBase64} : '/images/nophoto.png'"
+               alt="User photo" width="150"/>
+          <p></p>
+        </div>
+        <div class="details">
+          <form th:action="@{/profile}" method="get">
+            <button type="submit">Edit profile</button>
+          </form>
+          <div class="info">
+            <p><strong th:text="${user.name}">Name</strong>,
+              <span th:text="${year - user.birthYear} + ' yrs'">Age</span>,
+              <span th:text="${user.location}">Location</span>
+            </p>
+            <p>Interests:
+              <span th:text="${#strings.listJoin(user.matchingInterests, ', ')}"></span>
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <h2>Your matches: </h2>
+
+    <div id="matchesContainer"
+        th:attr="
+          data-user-id=${userId},
+          data-offset=${offset},
+          data-new-message=${#strings.listJoin(newMessage,',')}
+        ">
+      <div th:each="m : ${matches}" class="match-card">
+
+        <div class="photo">
+          <img th:src="${m.photoBase64} ? 'data:image/*;base64, ' + ${m.photoBase64} : '/images/nophoto.png'"
+               width="80" alt="photo"/>
+        </div>
+
+        <div class="info">
+          <p>
+            <strong th:text="${m.name}"></strong>,
+            <span th:text="${year - m.birthYear} + ' yrs'"></span>,
+            <span th:text="${m.location}"></span>
+          </p>
+          <p>Common interests:
+            <span th:text="${#strings.listJoin(m.matchingInterests, ', ')}"></span>
+          </p>
+          <p>Other interests:
+            <span th:text="${#strings.listJoin(m.otherInterests, ', ')}"></span>
+          </p>
+
+          <div class="actions">
+            <!-- Open Chat -->
+            <a th:href="@{/chat(userId=${userId},otherId=${m.id})}"
+               class="chatBtn">Open chat</a>
+            <!-- New message indicator -->
+            <span class="new-msg"
+                  th:if="${newMessage.contains(m.id)}"> New message! </span>
+            <!-- Reject button -->
+            <button class="rejectBtn" th:attr="data-id=${m.id}" >Reject</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button id="addBtn">Add more</button>
+    <span id="noMoreMsg" style="margin-left:1rem; color:#888;"></span>
+
+    <script th:inline="javascript">
+      const container = document.getElementById('matchesContainer');
+      const userId = container.dataset.userId;
+      let offset = parseInt(container.dataset.offset, 10);
+      const newMessage = container.dataset.newMessage ? container.dataset.newMessage.split(',') : [];
+      const addBtn = document.getElementById('addBtn');
+      const noMoreMsg = document.getElementById('noMoreMsg');
+
+      // Add more
+      addBtn.addEventListener('click', () => {
+                fetch(`/main/more?userId=${userId}&offset=${offset}`)
+                        .then(r => r.json())
+                        .then(data => {
+                          if (!data.length) {
+                            noMoreMsg.textContent = 'No more matches 👀';
+                            return;
+                          }
+                          noMoreMsg.textContent = '';
+                          data.forEach(m => renderCard(m));
+                          offset += data.length;
+                        });
+              });
+
+      // Reject
+      container.addEventListener('click', e => {
+                if (!e.target.classList.contains('rejectBtn')) return;
+                const matchedId = e.target.dataset.id;
+                fetch(`/main/reject?userId=${userId}&matchedId=${matchedId}`, {
+                  method: 'POST'
+                }).then(() => {
+                  e.target.closest('.match-card').remove();
+                  offset--;
+                });
+              });
+
+      // new card
+      function renderCard(m) {
+        const c = document.createElement('div');
+        c.className = 'match-card';
+
+        const photoDiv = document.createElement('div');
+        photoDiv.className = 'photo';
+        const img = document.createElement('img');
+        img.src = m.photoBase64 ? 'data:image/*;base64,' + m.photoBase64 : '/images/nophoto.png';
+        img.width = 80;
+        img.alt = 'photo';
+        photoDiv.appendChild(img);
+
+        const info = document.createElement('div');
+        info.className = 'info';
+        info.innerHTML = `
+          <p><strong>${m.name}</strong>, ${new Date().getFullYear() - m.birthYear} yrs, ${m.location}</p>
+          <p>Common interests: ${m.matchingInterests.join(', ')}</p>
+          <p>Other interests: ${m.otherInterests.join(', ')}</p>
+        `;
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        const chatBtn = document.createElement('a');
+        chatBtn.className = 'chatBtn';
+        chatBtn.href = `/chat?userId=${userId}&otherId=${m.id}`;
+        chatBtn.textContent = 'Open chat';
+        actions.appendChild(chatBtn);
+
+        if (newMessage.includes(m.id)) {
+          const msg = document.createElement('span');
+          msg.className = 'new-msg';
+          msg.textContent = ' New message! ';
+          actions.appendChild(msg);
+        }
+
+        const rej = document.createElement('button');
+        rej.className = 'rejectBtn';
+        rej.dataset.id = m.id;
+        rej.textContent = 'Reject';
+        actions.appendChild(rej);
+
+        info.appendChild(actions);
+        c.append(photoDiv, info);
+        container.appendChild(c);
+      }
+    </script>
+
+
+  </body>
+</html>

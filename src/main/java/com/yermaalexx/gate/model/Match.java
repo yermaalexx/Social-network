@@ -12,7 +12,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserMatch {
+public class Match {
     @Id
     @GeneratedValue
     private UUID id;
