@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "new_messages")
+@Table(name = "new_messages",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "who_sent_message_id"}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

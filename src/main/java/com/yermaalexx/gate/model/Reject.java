@@ -8,19 +8,17 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "user_matches")
+@Table
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Match {
+public class Reject {
     @Id
     @GeneratedValue
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
     private UUID userId;
 
-    @Column(name = "matched_user_id", nullable = false)
-    private UUID matchedUserId;
+    private UUID rejectedUserId;
 
 }

@@ -10,10 +10,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(
-        name = "chats",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_a", "user_b"})
-)
+@Table(name = "chats",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_a", "user_b"}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,10 +34,10 @@ public class Chat {
     )
     private List<Message> messages = new ArrayList<>();
 
-    public void addMessage(Message msg, int maxMessagesInChart) {
+    public void addMessage(Message msg, int maxMessagesInChat) {
         msg.setChat(this);
         messages.add(msg);
-        if (messages.size() > maxMessagesInChart) {
+        if (messages.size() > maxMessagesInChat) {
             messages.remove(0);
         }
     }

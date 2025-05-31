@@ -77,11 +77,20 @@
       <img src="/images/Matchify-logo.png" class="logo" alt="Matchify logo"/>
     </header>
 
+    <div style="text-align: left; margin-top: 1rem; margin-left: 2rem">
+      <form th:action="@{/main}" method="get">
+        <button type="submit" style="padding: 0.5rem 1.5rem; font-size: 1rem; border-radius: 8px; border: none; background-color: #007bff; color: white; cursor: pointer;">
+          Close chat and return to Main page
+        </button>
+      </form>
+    </div>
+
     <div class="chat-grid">
       <div class="profile" th:fragment="userProfile">
         <img th:src="${user.getPhotoBase64} ? 'data:image/*;base64, ' + ${user.getPhotoBase64} : '/images/nophoto.png'"
              alt="User photo" />
         <div>
+          <h3>You: </h3>
           <strong th:text="${user.name}">User</strong><br/>
           <small th:text="${year - user.birthYear} + ' yrs, ' + ${user.location}">Age, location</small>
           <p>Interests:
@@ -93,6 +102,7 @@
         <img th:src="${other.getPhotoBase64} ? 'data:image/*;base64, ' + ${other.getPhotoBase64} : '/images/nophoto.png'"
              alt="Other photo" />
         <div>
+          <h3>Your interlocutor: </h3>
           <strong th:text="${other.name}">Other</strong><br/>
           <small th:text="${year - other.birthYear} + ' yrs, ' + ${other.location}">Age, location</small>
           <p>Interests:

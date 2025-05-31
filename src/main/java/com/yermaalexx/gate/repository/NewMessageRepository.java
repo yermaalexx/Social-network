@@ -9,10 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface NewMessageRepository extends JpaRepository<NewMessage, UUID> {
-
     List<NewMessage> findAllByUserId(UUID userId);
     void deleteByUserIdAndWhoSentMessageId(UUID userId, UUID whoSentMessageId);
-    void deleteByUserId(UUID userId);
-    void deleteByWhoSentMessageId(UUID whoSentMessageId);
     boolean existsByUserIdAndWhoSentMessageId(UUID userId, UUID whoSentMessageId);
 }

@@ -3,10 +3,11 @@ package com.yermaalexx.gate.controller;
 import com.yermaalexx.gate.config.AppConfig;
 import com.yermaalexx.gate.model.UserDTO;
 import com.yermaalexx.gate.model.UserLogin;
-import com.yermaalexx.gate.service.MatchService;
+import com.yermaalexx.gate.service.RejectService;
 import com.yermaalexx.gate.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -21,10 +22,11 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/main")
 @RequiredArgsConstructor
+@Slf4j
 public class MainPageController {
 
     private final UserService userService;
-    private final MatchService matchService;
+    private final RejectService rejectService;
     private final AppConfig appConfig;
 
     @GetMapping
@@ -34,15 +36,19 @@ public class MainPageController {
             Model model
             ) {
         UUID userId = userLogin.getUserId();
+        log.info("User {} accessed main page", userId);
+
         UserDTO user = userService.getUserProfile(userId);
         model.addAttribute("user", user);
 
         if(session.getAttribute("matchIds") == null) {
+            log.debug("Session does not contain match list for user {}. Generating matches...", userId);
             List<UUID>[] usersWithNewMsgAndAll = userService.getUsersSortedByInterestMatch(userId);
             List<UUID> usersWithNewMsg = usersWithNewMsgAndAll[0];
             List<UUID> all = usersWithNewMsgAndAll[1];
             session.setAttribute("matchIds", new ArrayList<>(all));
             session.setAttribute("newMsg", new ArrayList<>(usersWithNewMsg));
+            log.info("Generated {} total matches ({} with new messages) for user {}", all.size(), usersWithNewMsg.size(), userId);
         }
 
         @SuppressWarnings("unchecked")
@@ -60,7 +66,18 @@ public class MainPageController {
         model.addAttribute("userId", userId);
         model.addAttribute("offset", dtos.size());
         model.addAttribute("year", Calendar.getInstance().get(Calendar.YEAR));
+
+        log.debug("Loaded {} user cards for user {}", dtos.size(), userId);
         return "main";
+    }
+
+    @GetMapping("/renew")
+    public String renew(HttpSession session,
+                        @AuthenticationPrincipal UserLogin userLogin) {
+        session.setAttribute("matchIds", null);
+        log.info("Match list for userId={} was reset via /main/renew", userLogin.getUserId());
+
+        return "redirect:/main";
     }
 
     @GetMapping("/more")
@@ -72,8 +89,11 @@ public class MainPageController {
             HttpSession session
     ) {
         UUID current = userLogin.getUserId();
-        if (!current.equals(userId))
+        if (!current.equals(userId)) {
+            log.warn("Unauthorized loadMore attempt: session user {} != param user {}",
+                    current, userId);
             return new ArrayList<>();
+        }
 
         @SuppressWarnings("unchecked")
         List<UUID> ids = (List<UUID>) session.getAttribute("matchIds");
@@ -83,6 +103,8 @@ public class MainPageController {
                 .limit(appConfig.getCardsOnPage())
                 .toList();
 
+        log.debug("User {} is loading more matches from offset {} ({} items)",
+                userId, offset, slice.size());
         return userService.getUserMatchedDTOs(slice, userId);
     }
 
@@ -96,15 +118,18 @@ public class MainPageController {
     ) {
 
         UUID current = userLogin.getUserId();
-        if (!current.equals(userId))
+        if (!current.equals(userId)) {
+            log.warn("Unauthorized reject attempt: session user {} != param user {}", current, userId);
             return;
+        }
 
-        matchService.reject(userId, matchedId);
+        log.info("User {} rejected user {}", userId, matchedId);
+        rejectService.reject(userId, matchedId);
 
         @SuppressWarnings("unchecked")
         List<UUID> ids = (List<UUID>) session.getAttribute("matchIds");
-
         ids.remove(matchedId);
+        log.debug("Removed user {} from session match list for user {}", matchedId, userId);
     }
 
 

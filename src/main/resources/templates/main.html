@@ -31,6 +31,25 @@
       <img src="/images/Matchify-logo.png" class="logo" alt="Matchify logo"/>
     </header>
 
+    <div style="margin-top: 1rem; margin-left: 1rem">
+      <div style="display: flex; align-items: center; gap: 1rem;" >
+        <!-- Renew page -->
+        <form th:action="@{/main/renew}" method="get">
+          <button type="submit" style="padding: 0.5rem 1.5rem; font-size: 1rem;
+              border-radius: 8px; border: none; background-color: #007bff; color: white; cursor: pointer;">
+            Renew page
+          </button>
+        </form>
+        <!-- Logout -->
+        <form th:action="@{/logout}" method="post">
+          <button type="submit" style="padding: 0.5rem 1.5rem; font-size: 1rem; border-radius: 8px;
+              border: none; background-color: #6c757d; color: white; cursor: pointer;">
+            Logout
+          </button>
+        </form>
+      </div>
+    </div>
+
     <section class="my-profile">
       <h2>Your profile: </h2>
       <div class="profile-card">

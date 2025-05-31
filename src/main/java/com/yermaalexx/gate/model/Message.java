@@ -33,6 +33,4 @@ public class Message {
     @Column(nullable = false)
     private Instant sentAt = Instant.now();
 
-    //@Column(nullable = false)
-    //private boolean readByRecipient = false;
 }

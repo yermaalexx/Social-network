@@ -4,6 +4,7 @@ import com.yermaalexx.gate.model.User;
 import com.yermaalexx.gate.repository.UserRepository;
 import com.yermaalexx.gate.service.PhotoService;
 import com.yermaalexx.gate.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Configuration
+@Slf4j
 public class DataLoader {
 
     @Bean
@@ -30,7 +32,9 @@ public class DataLoader {
                     ClassPathResource imgFile = new ClassPathResource("static/images/data/woman3.jpg");
                     byte[] photo = FileCopyUtils.copyToByteArray(imgFile.getInputStream());
                     photoService.saveNewPhoto(user.getId(),photo);
-                } catch (IOException e) {}
+                } catch (IOException e) {
+                    log.warn("Cannot load photo for {} in DataLoader", user.getLogin());
+                }
                 user = userService.saveNewUser(new User(null,"Bill",
                         "bill","pass",2000,"NY",LocalDate.now(),
                         List.of("Movies SciFi","Movies Drama","Movies Comedy","Books SciFi","Books Thriller","Books Classic")), null);
@@ -38,7 +42,9 @@ public class DataLoader {
                     ClassPathResource imgFile = new ClassPathResource("static/images/data/man2.jpg");
                     byte[] photo = FileCopyUtils.copyToByteArray(imgFile.getInputStream());
                     photoService.saveNewPhoto(user.getId(),photo);
-                } catch (IOException e) {}
+                } catch (IOException e) {
+                    log.warn("Cannot load photo for {} in DataLoader", user.getLogin());
+                }
                 user = userService.saveNewUser(new User(null,"Dave",
                         "dave","pass",2005,"LA",LocalDate.now(),
                         List.of("Movies SciFi","Movies Action","Movies Documentaries","Books Horror","Rock")), null);
@@ -46,7 +52,9 @@ public class DataLoader {
                     ClassPathResource imgFile = new ClassPathResource("static/images/data/man3.jpg");
                     byte[] photo = FileCopyUtils.copyToByteArray(imgFile.getInputStream());
                     photoService.saveNewPhoto(user.getId(),photo);
-                } catch (IOException e) {}
+                } catch (IOException e) {
+                    log.warn("Cannot load photo for {} in DataLoader", user.getLogin());
+                }
                 userService.saveNewUser(new User(null,"Petya",
                         "petya","pass",1998,"Dnipro",LocalDate.now(),
                         List.of("Movies SciFi","Movies Drama","Books SciFi","Books Thriller","Hip-Hop","Cycling & Running")), null);
