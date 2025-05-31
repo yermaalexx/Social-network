@@ -8,6 +8,7 @@ target/classes/*
 logs/
 *.log
 
+
 _toDel
 
 .mvn
