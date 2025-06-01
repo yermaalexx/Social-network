@@ -2,8 +2,8 @@ spring:
   datasource:
     url: jdbc:h2:mem:social-network
     driverClassName: "org.h2.Driver"
-    username: h2
-    password: pass
+    username: ${DB_H2_USER:h2}
+    password: ${DB_H2_PASS:pass}
   jpa:
     hibernate:
       ddl-auto: create-drop

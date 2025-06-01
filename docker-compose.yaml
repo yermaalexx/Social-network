@@ -1,0 +1,46 @@
+services:
+
+  postgresql-db:
+    image: postgres:17-alpine
+    user: ${DB_POSTGRES_USER}
+    environment:
+      POSTGRES_DB: social-network
+      POSTGRES_PASSWORD: ${DB_POSTGRES_PASS}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-d", "social-network", "-U", "${DB_POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 3s
+      retries: 50
+    ports:
+      - ${DB_POSTGRES_PORT}:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  application:
+    image: social-network:0.0.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      postgresql-db:
+        condition: service_healthy
+    volumes:
+      - logs:/application/logs
+    environment:
+      - spring.profiles.active=postgres
+      - CARDS_ON_PAGE=${CARDS_ON_PAGE}
+      - MAX_MESSAGES_IN_CHAT=${MAX_MESSAGES_IN_CHAT}
+      - DB_H2_USER=${DB_H2_USER}
+      - DB_H2_PASS=${DB_H2_PASS}
+      - DB_POSTGRES_HOST=postgresql-db
+      - DB_POSTGRES_PORT=${DB_POSTGRES_PORT}
+      - DB_POSTGRES_USER=${DB_POSTGRES_USER}
+      - DB_POSTGRES_PASS=${DB_POSTGRES_PASS}
+
+volumes:
+  db-data:
+  logs:
