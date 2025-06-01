@@ -9,25 +9,12 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.yermaalexx</groupId>
-	<artifactId>gate</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>gate</name>
-	<description>gate</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+	<artifactId>social-network</artifactId>
+	<version>0.0.1</version>
+	<name>social-network</name>
+	<description>social-network</description>
 	<properties>
-		<java.version>21</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
