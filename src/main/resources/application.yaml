@@ -1,13 +1,13 @@
 app:
-  cards-on-page: 2
-  max-messages-in-chat: 20
+  cards-on-page: ${CARDS_ON_PAGE:2}
+  max-messages-in-chat: ${MAX_MESSAGES_IN_CHAT:20}
 
 server:
   port: 8080
 
 spring:
   application:
-    name: gate
+    name: social-network
   jpa:
     open-in-view: true
   profiles:

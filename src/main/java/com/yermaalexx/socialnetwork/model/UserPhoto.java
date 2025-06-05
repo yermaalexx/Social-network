@@ -15,7 +15,8 @@ public class UserPhoto {
     @Id
     private UUID userId;
 
-    @Lob
+    @Basic
     @Column(name = "user_photo", columnDefinition = "BYTEA")
     private byte[] userPhoto;
+
 }
