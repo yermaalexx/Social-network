@@ -1,5 +1,14 @@
 services:
 
+  redis:
+    image: redis:latest
+    container_name: redis-local
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
   postgresql-db:
     image: postgres:17-alpine
     user: ${DB_POSTGRES_USER}
@@ -40,7 +49,10 @@ services:
       - DB_POSTGRES_PORT=${DB_POSTGRES_PORT}
       - DB_POSTGRES_USER=${DB_POSTGRES_USER}
       - DB_POSTGRES_PASS=${DB_POSTGRES_PASS}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
 
 volumes:
+  redis-data:
   db-data:
   logs:

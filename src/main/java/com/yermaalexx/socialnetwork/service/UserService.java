@@ -23,14 +23,21 @@ public class UserService {
     private final PhotoService photoService;
     private final RejectService rejectService;
     private final NewMessageService newMessageService;
+    private final UserServiceCache userServiceCache;
+    private final PhotoServiceCache photoServiceCache;
 
+    public List<User> getUsersByIds(List<UUID> ids) {
+        return ids.stream()
+                .map(userServiceCache::getUser)
+                .toList();
+    }
 
     @Transactional
     public User saveNewUser(User user, byte[] photoBytes) {
         user.setRegistrationDate(LocalDate.now());
         log.info("Registering new user: name={}, birthYear={}, location={}", user.getName(), user.getBirthYear(), user.getLocation());
 
-        User savedUser = userRepository.save(user);
+        User savedUser = userServiceCache.saveUser(user);
         log.debug("User saved with id={}", savedUser.getId());
 
         if(photoBytes != null) {
@@ -49,7 +56,7 @@ public class UserService {
         UUID id = userAfter.getId();
         log.info("Updating user profile: userId={}", id);
 
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userServiceCache.getUser(id);
         boolean interestsChanged = !userAfter.getMatchingInterests().equals(user.getInterests());
 
         user.setName(userAfter.getName());
@@ -62,7 +69,7 @@ public class UserService {
             session.setAttribute("matchIds", null);
         }
 
-        userRepository.save(user);
+        userServiceCache.updateUser(user);
         log.debug("User profile updated in DB for userId={}", id);
 
         if (userAfter.getPhotoBase64() != null) {
@@ -72,7 +79,7 @@ public class UserService {
         }
         else {
             log.info("Deleting profile photo for userId={}", id);
-            photoService.deletePhoto(id);
+            photoServiceCache.deletePhoto(id);
         }
 
     }
@@ -106,11 +113,10 @@ public class UserService {
     public List<UserDTO> getUserMatchedDTOs(List<UUID> ids, UUID userId) {
         log.info("Generating matched user DTOs for userId={} and {} matched IDs", userId, ids.size());
 
-        List<User> users = userRepository.findAllById(ids);
+        List<User> users = getUsersByIds(ids);
         Map<UUID, User> map = users.stream()
                 .collect(Collectors.toMap(User::getId, u -> u));
-        List<String> interests = userRepository.findById(userId)
-                .orElseThrow().getInterests();
+        List<String> interests = userServiceCache.getUser(userId).getInterests();
 
         return ids.stream()
                 .map(id -> {
@@ -137,7 +143,7 @@ public class UserService {
     public UserDTO getUserProfile(UUID userId) {
         log.info("Fetching profile for userId={}", userId);
 
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userServiceCache.getUser(userId);
         byte[] photo = photoService.findPhotoById(userId);
         String photoBase64 = (photo == null) ? null : Base64.getEncoder().encodeToString(photo);
 

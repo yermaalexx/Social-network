@@ -10,9 +10,21 @@ spring:
     name: social-network
   jpa:
     open-in-view: true
+    show-sql: true
   profiles:
     default: h2
   servlet:
     multipart:
       max-file-size: 5MB
       max-request-size: 10MB
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ""
+      timeout: 60000ms
+  cache:
+    type: redis
+
+

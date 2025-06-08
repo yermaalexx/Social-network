@@ -1,5 +1,7 @@
 package com.yermaalexx.socialnetwork.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,10 +17,12 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
     @Id
     @GeneratedValue
     @Column(columnDefinition = "uuid")
+    @JsonAlias("userId")
     private UUID id;
 
     private String name;
@@ -35,7 +39,7 @@ public class User {
 
     private LocalDate registrationDate;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_interests", joinColumns = @JoinColumn(name = "user_id",
     referencedColumnName = "id", columnDefinition = "uuid"))
     @Column(name = "interest")
