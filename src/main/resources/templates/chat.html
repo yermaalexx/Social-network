@@ -120,7 +120,7 @@
           <div th:if="${msg.senderId.equals(user.id)}"
                class="message from-me">
             <div th:text="${msg.content}">My message</div>
-            <small th:text="${#dates.format(msg.sentAt, 'HH:mm dd.MM.yyyy')}">time</small>
+            <small th:text="${msg.formattedSentAt}">time</small>
           </div>
         </div>
         <!-- права клітинка: тільки якщо msg від other -->
@@ -128,14 +128,14 @@
           <div th:if="${!msg.senderId.equals(user.id)}"
                class="message from-other">
             <div th:text="${msg.content}">Other message</div>
-            <small th:text="${#dates.format(msg.sentAt, 'HH:mm dd.MM.yyyy')}">time</small>
+            <small th:text="${msg.formattedSentAt}">time</small>
           </div>
         </div>
       </th:block>
 
     </div>
 
-    <form th:action="@{/chat/send(chatId=${chatId},userId=${user.id},otherId=${other.id})}" method="post" class="input-area">
+    <form th:action="@{/chat/send(userId=${user.id},otherId=${other.id})}" method="post" class="input-area">
       <input type="text" name="content" maxlength="200"
              placeholder="Type a message (no more than 200 characters)…" required/>
       <button type="submit">Send</button>

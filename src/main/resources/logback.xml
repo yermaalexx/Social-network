@@ -22,7 +22,7 @@
     <appender name="Async-Appender" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="RollingFile-Appender" />
     </appender>
-    <logger name="com.yermaalexx.socialnetwork" level="debug" >
+    <logger name="com.yermaalexx.gateway" level="debug" >
         <appender-ref  ref="Async-Appender" />
     </logger>
     <logger name="org.springframework" level="info" >
