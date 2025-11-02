@@ -18,7 +18,7 @@ public class UserServiceCache {
 
     private final UserRepository userRepository;
 
-    //@Cacheable(value = "users", key = "#id")
+    @Cacheable(value = "users", key = "#id")
     public User getUser(UUID id) {
         log.info("Fetching user from DB for id={}", id);
         return userRepository.findById(id)
@@ -29,12 +29,12 @@ public class UserServiceCache {
         return userRepository.save(user);
     }
 
-    //@CachePut(value = "users", key = "#user.id")
+    @CachePut(value = "users", key = "#user.id")
     public User updateUser(User user) {
         return userRepository.save(user);
     }
 
-    //@CacheEvict(value = "users", key = "#id")
+    @CacheEvict(value = "users", key = "#id")
     public void deleteUser(UUID id) {
         userRepository.deleteById(id);
     }

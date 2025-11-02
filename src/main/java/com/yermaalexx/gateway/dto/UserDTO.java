@@ -1,6 +1,5 @@
 package com.yermaalexx.gateway.dto;
 
-import com.yermaalexx.gateway.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

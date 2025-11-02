@@ -18,18 +18,18 @@ public class PhotoServiceCache {
 
     private final PhotoRepository photoRepository;
 
-    //@Cacheable(value = "photos", key = "#id")
+    @Cacheable(value = "photos", key = "#id")
     public UserPhoto getPhoto(UUID id) {
         log.info("Fetching photo from DB for userId={}", id);
         return photoRepository.findById(id).orElse(null);
     }
 
-    //@CachePut(value = "photos", key = "#userPhoto.userId")
+    @CachePut(value = "photos", key = "#userPhoto.userId")
     public UserPhoto savePhoto(UserPhoto userPhoto) {
         return photoRepository.save(userPhoto);
     }
 
-    //@CacheEvict(value = "photos", key = "#id")
+    @CacheEvict(value = "photos", key = "#id")
     public void deletePhoto(UUID id) {
         photoRepository.deleteById(id);
     }
